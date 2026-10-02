@@ -12,5 +12,6 @@ node_modules/
 presentation
 presentation.zip
 dist/reveal.es5.js
+react/dist
 react/demo/dist
-react/dist/plugin
+dev.html

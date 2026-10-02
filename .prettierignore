@@ -1,6 +1,7 @@
 js/**/*.js
 plugin/**/*.js
-test/**/*.md
+**/*.md
 test/**/*.html
 examples/**/*.md
 dist/**/*
+*.html

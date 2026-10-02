@@ -1,13 +1,30 @@
-import {
-	Config,
-	TransitionStyle as _TransitionStyle,
-	TransitionSpeed as _TransitionSpeed,
-	FragmentAnimation as _FragmentAnimation,
+import type {
+	RevealConfig,
+	TransitionStyle,
+	TransitionSpeed,
+	FragmentAnimation,
+	KatexConfig,
+	Mathjax2Config,
+	Mathjax3Config,
+	Mathjax4Config,
+	HighlightConfig,
+	MarkdownConfig,
 } from './config';
 
-export as namespace Reveal;
+export type {
+	RevealConfig,
+	TransitionStyle,
+	TransitionSpeed,
+	FragmentAnimation,
+	KatexConfig,
+	Mathjax2Config,
+	Mathjax3Config,
+	Mathjax4Config,
+	HighlightConfig,
+	MarkdownConfig,
+} from './config';
 
-export = Reveal;
+export default Reveal;
 
 // The type definitions in this file are adapted from those
 // originally created by the community on DefinitelyTyped:
@@ -23,21 +40,16 @@ export = Reveal;
  * @see {@link https://revealjs.com/api/}
  */
 declare const Reveal: {
-	new (options?: Config): Reveal.Api;
-	new (revealElement: HTMLElement, options?: Config): Reveal.Api;
-} & Reveal.Api;
-
-declare namespace Reveal {
-	export type TransitionStyle = _TransitionStyle;
-	export type TransitionSpeed = _TransitionSpeed;
-	export type FragmentAnimation = _FragmentAnimation;
+	new (options?: RevealConfig): RevealApi;
+	new (revealElement: HTMLElement, options?: RevealConfig): RevealApi;
+} & RevealApi;
 
 	/**
 	 * The public reveal.js API
 	 *
 	 * @see {@link https://github.com/hakimel/reveal.js/blob/master/js/reveal.js}
 	 */
-	interface Api {
+	export interface RevealApi {
 		/**
 		 * The reveal.js version
 		 *
@@ -51,15 +63,15 @@ declare namespace Reveal {
 		 * @param options - RevealOption see {@link Options}
 		 * @returns a promise
 		 */
-		initialize(options?: Config): Promise<Api>;
+		initialize(options?: RevealConfig): Promise<RevealApi>;
 
 		/**
 		 * Applies the configuration settings from the config
 		 * object. May be called multiple times.
 		 *
-		 * @param options - RevealOption see {@link Config}
+		 * @param options - RevealOption see {@link RevealConfig}
 		 */
-		configure(options?: Config): void;
+		configure(options?: RevealConfig): void;
 
 		/**
 		 * Uninitializes reveal.js by undoing changes made to the
@@ -464,7 +476,7 @@ declare namespace Reveal {
 			/** `revealElement` by default */
 			target?: HTMLElement;
 			type: string;
-			data: any;
+			data?: unknown;
 			bubbles?: boolean;
 		}): Event;
 
@@ -704,7 +716,7 @@ declare namespace Reveal {
 		 *
 		 * @returns the current configuration object
 		 */
-		getConfig(): Config;
+		getConfig(): RevealConfig;
 
 		/**
 		 * Returns a key:value hash of all query params.
@@ -750,7 +762,7 @@ declare namespace Reveal {
 		 *
 		 * @param plugin
 		 */
-		registerPlugin(plugin: Plugin): void;
+		registerPlugin(plugin: RevealPlugin): void;
 
 		/**
 		 * Checks if a specific plugin has been registered.
@@ -767,29 +779,29 @@ declare namespace Reveal {
 		 * @param id - unique plugin identifier
 		 * @returns plugin instance
 		 */
-		getPlugin(id: string): Plugin | undefined;
+		getPlugin(id: string): RevealPlugin | undefined;
 
 		/**
 		 * @returns id:plugin hash of all plugins
 		 */
-		getPlugins(): { [id: string]: Plugin };
+		getPlugins(): Record<string, RevealPlugin>;
 	}
 
 	/**
 	 * Options for navigation
 	 */
-	interface NavigateParams {
+	export interface NavigateParams {
 		skipFragments?: boolean;
 	}
 
-	type NavigationFunction = (params?: NavigateParams) => void;
+	export type NavigationFunction = (params?: NavigateParams) => void;
 
 	/**
 	 * Multiplex configuration
 	 *
 	 * @see {@link https://github.com/reveal/multiplex}
 	 */
-	interface MultiplexConfig {
+	export interface MultiplexConfig {
 		// Obtained from the socket.io server. Gives this (the master) control of the presentation
 		secret: string | null;
 		// Obtained from the socket.io server
@@ -799,108 +811,25 @@ declare namespace Reveal {
 	}
 
 	/**
-	 * katex - Math Plugin configuration
-	 *
-	 * @see {@link https://github.com/reveal/revealjs.com/blob/master/src/math.md}
-	 * @see {@link https://github.com/hakimel/reveal.js/blob/master/plugin/math/katex.js}
-	 */
-	interface KatexConfig {
-		local?: string;
-		version?: string;
-		delimiters?: Array<{ left: string; right: string; display: boolean }>;
-		ignoredTags?: string[];
-	}
-
-	/**
-	 * mathjax2 - Math Plugin configuration
-	 *
-	 * @see {@link https://github.com/reveal/revealjs.com/blob/master/src/math.md}
-	 * @see {@link https://github.com/hakimel/reveal.js/blob/master/plugin/math/mathjax2.js}
-	 */
-	interface Mathjax2Config {
-		mathjax?: string;
-		config?: string;
-		tex2jax?: {
-			inlineMath?: any;
-			skipTags?: string[];
-		};
-	}
-
-	/**
-	 * mathjax3 - Math Plugin configuration
-	 *
-	 * @see {@link https://github.com/reveal/revealjs.com/blob/master/src/math.md}
-	 * @see {@link https://github.com/hakimel/reveal.js/blob/master/plugin/math/mathjax3.js}
-	 */
-	interface Mathjax3Config {
-		mathjax?: string;
-		tex?: { inlineMath?: any };
-		options?: { skipHtmlTags: string[] };
-	}
-
-	/**
-	 * Highlight Plugin configuration
-	 *
-	 * @see {@link https://github.com/hakimel/reveal.js/blob/master/plugin/highlight/plugin.js}
-	 */
-	interface HighlightConfig {
-		highlightOnLoad?: boolean;
-		escapeHTML?: boolean;
-		beforeHighlight?: (...args: any) => any;
-	}
-
-	/**
-	 * Markdown Plugin configuration
-	 *
-	 * @see {@link https://github.com/reveal/revealjs.com/blob/master/src/markdown.md}
-	 * @see {@link https://marked.js.org/using_advanced}
-	 */
-	interface MarkdownConfig {
-		async?: boolean;
-		baseUrl?: string;
-		breaks?: boolean;
-		gfm?: boolean;
-		headerIds?: boolean;
-		headerPrefix?: string;
-		highlight?: (...args: any) => any;
-		langPrefix?: string;
-		mangle?: boolean;
-		pedantic?: boolean;
-		renderer?: object;
-		sanitize?: boolean;
-		sanitizer?: (...args: any) => any;
-		silent?: boolean;
-		smartLists?: boolean;
-		smartypants?: boolean;
-		tokenizer?: object;
-		walkTokens?: (...args: any) => any;
-		xhtml?: boolean;
-		separator?: string;
-		verticalSeparator?: string;
-		notesSeparator?: string;
-		attributes?: string;
-	}
-
-	/**
 	 * Reveal Dependency
 	 *
 	 * @see {@link https://revealjs.com/plugins/#dependencies}
 	 */
-	interface RevealDependency {
+	export interface RevealDependency {
 		src: string;
 		async?: boolean;
 		callback?: () => void;
 		condition?: () => boolean;
 	}
 
-	interface ComputedSlideSize {
+	export interface ComputedSlideSize {
 		width: number;
 		height: number;
 		presentationWidth: number;
 		presentationHeight: number;
 	}
 
-	interface RevealState {
+	export interface RevealState {
 		indexh: number;
 		indexv: number;
 		indexf: number;
@@ -928,7 +857,7 @@ declare namespace Reveal {
 		previewFit?: 'none' | 'scale-down' | 'contain' | 'cover';
 	}
 
-	interface SlideSyncEvent extends Event {
+	export interface SlideSyncEvent extends Event {
 		slide: HTMLElement;
 	}
 
@@ -938,14 +867,10 @@ declare namespace Reveal {
 	 *
 	 * @see {@link https://revealjs.com/creating-plugins/}
 	 */
-	interface Plugin {
+	export interface RevealPlugin {
 		id: string;
-		// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-		init?(reveal: Api): void | Promise<any>;
+		init?(reveal: RevealApi): void | Promise<void>;
 		destroy?(): void;
 	}
 
-	interface PluginFunction {
-		(): Plugin;
-	}
-}
+	export type RevealPluginFactory = () => RevealPlugin;

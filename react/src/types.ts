@@ -1,15 +1,24 @@
-import type { CSSProperties, ReactNode, ElementType, Ref } from 'react';
-import type Reveal from 'reveal.js';
+import type { CSSProperties, ReactNode, ElementType, Ref, ReactElement } from 'react';
+import type {
+	FragmentAnimation,
+	MarkdownConfig,
+	RevealApi,
+	RevealConfig,
+	RevealPlugin,
+	RevealPluginFactory,
+	TransitionSpeed,
+	TransitionStyle,
+} from 'reveal.js';
 
-type RevealConfig = NonNullable<Parameters<Reveal.Api['initialize']>[0]>;
-type RevealPlugin = Reveal.Plugin | Reveal.PluginFunction;
-type RevealEventHandler = Parameters<Reveal.Api['on']>[1];
+type DeckConfig = RevealConfig;
+type DeckPlugin = RevealPlugin | RevealPluginFactory;
+type RevealEventHandler = Parameters<RevealApi['on']>[1];
 
 export type DeckProps = {
-	config?: Omit<RevealConfig, 'plugins'>;
+	config?: Omit<DeckConfig, 'plugins'>;
 	/** Registered during deck initialization only. Subsequent prop updates are ignored. */
-	plugins?: RevealPlugin[];
-	onReady?: (deck: Reveal.Api) => void;
+	plugins?: DeckPlugin[];
+	onReady?: (deck: RevealApi) => void;
 	onSync?: RevealEventHandler;
 	onSlideSync?: RevealEventHandler;
 	onSlideChange?: RevealEventHandler;
@@ -20,14 +29,82 @@ export type DeckProps = {
 	onOverviewHidden?: RevealEventHandler;
 	onPaused?: RevealEventHandler;
 	onResumed?: RevealEventHandler;
-	deckRef?: Ref<Reveal.Api | null>;
+	deckRef?: Ref<RevealApi | null>;
 	className?: string;
 	style?: CSSProperties;
 	children?: ReactNode;
 };
 
-export type SlideProps = React.HTMLAttributes<HTMLElement> & {
+export type SlideDataAttributeValue = string | number | boolean | undefined;
+
+export type SlideDataAttributes = {
+	[key: `data-${string}`]: SlideDataAttributeValue;
+};
+
+export type SlideBackgroundProps = {
+	background?: string;
+	backgroundImage?: string;
+	backgroundVideo?: string;
+	backgroundVideoLoop?: boolean;
+	backgroundVideoMuted?: boolean;
+	backgroundIframe?: string;
+	backgroundColor?: string;
+	backgroundGradient?: string;
+	backgroundSize?: string;
+	backgroundPosition?: string;
+	backgroundRepeat?: string;
+	backgroundOpacity?: number | string;
+	backgroundTransition?: TransitionStyle;
+};
+
+export type SlideVisibility = 'hidden' | 'uncounted';
+
+export type SlideAutoAnimateProps = {
+	visibility?: SlideVisibility;
+	autoAnimate?: boolean;
+	autoAnimateId?: string;
+	autoAnimateRestart?: boolean;
+	autoAnimateUnmatched?: boolean;
+	autoAnimateEasing?: string;
+	autoAnimateDuration?: number | string;
+	autoAnimateDelay?: number | string;
+};
+
+export type SlideRevealProps = {
+	transition?: string;
+	transitionSpeed?: TransitionSpeed;
+	autoSlide?: number | string;
+	notes?: string;
+	backgroundInteractive?: boolean;
+	preload?: boolean;
+};
+
+export type SlideProps = React.HTMLAttributes<HTMLElement> &
+	SlideDataAttributes &
+	SlideBackgroundProps &
+	SlideAutoAnimateProps &
+	SlideRevealProps & {
 	children?: ReactNode;
+};
+
+export type MarkdownOptions = Omit<
+	MarkdownConfig,
+	'async' | 'separator' | 'verticalSeparator' | 'notesSeparator' | 'attributes'
+> & {
+	animateLists?: boolean;
+};
+
+export type MarkdownProps = Omit<SlideProps, 'children'> & {
+	children?: string;
+	markdown?: string;
+	src?: string;
+	charset?: string;
+	separator?: string;
+	verticalSeparator?: string | null;
+	notesSeparator?: string;
+	elementAttributesSeparator?: string;
+	slideAttributesSeparator?: string;
+	options?: MarkdownOptions;
 };
 
 export type StackProps = {
@@ -36,14 +113,26 @@ export type StackProps = {
 	children?: ReactNode;
 };
 
-export type FragmentProps = {
-	animation?: Reveal.FragmentAnimation;
-	index?: number;
-	as?: ElementType;
+type FragmentBaseProps = {
+	animation?: FragmentAnimation;
 	className?: string;
 	style?: CSSProperties;
+	index?: number;
+};
+
+type FragmentElementProps = FragmentBaseProps & {
+	asChild?: false;
+	as?: ElementType;
 	children?: ReactNode;
 };
+
+type FragmentAsChildProps = FragmentBaseProps & {
+	asChild: true;
+	as?: never;
+	children: ReactElement;
+};
+
+export type FragmentProps = FragmentElementProps | FragmentAsChildProps;
 
 export type CodeProps = Omit<React.HTMLAttributes<HTMLPreElement>, 'children'> & {
 	children?: string;

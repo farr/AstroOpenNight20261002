@@ -1,6 +1,7 @@
 /// <reference path="./reveal.d.ts" />
 
-import { Config } from './config.ts';
+import { RevealConfig } from './config.ts';
+import type { RevealApi } from './reveal';
 
 // @ts-ignore
 import Deck, { VERSION } from './reveal.js';
@@ -16,7 +17,7 @@ import Deck, { VERSION } from './reveal.js';
  * });
  */
 const Reveal: {
-	initialize: (options?: Config) => Promise<Reveal.Api>;
+	initialize: (options?: RevealConfig) => Promise<RevealApi>;
 	[key: string]: any;
 } = Deck;
 
@@ -32,11 +33,11 @@ const Reveal: {
  * });
  */
 
-type RevealApiFunction = (deck: Reveal.Api) => any;
+type RevealApiFunction = (deck: RevealApi) => any;
 
 const enqueuedAPICalls: RevealApiFunction[] = [];
 
-Reveal.initialize = (options?: Config) => {
+Reveal.initialize = (options?: RevealConfig) => {
 	const revealElement = document.querySelector('.reveal');
 
 	if (!(revealElement instanceof HTMLElement)) {
@@ -47,7 +48,7 @@ Reveal.initialize = (options?: Config) => {
 	Object.assign(Reveal, new Deck(revealElement, options));
 
 	// Invoke any enqueued API calls
-	enqueuedAPICalls.map((method) => method(Reveal as Reveal.Api));
+	enqueuedAPICalls.map((method) => method(Reveal as RevealApi));
 
 	return Reveal.initialize();
 };
