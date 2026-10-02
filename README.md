@@ -1,10 +1,10 @@
-# Astronomy Open Night 2026-03-06
+# Astronomy Open Night 2026-10-02
 
 This is the talk I gave at the [Stony Brook Astronomy Open
-Night](https://www.astro.sunysb.edu/opennight/) on 2026-03-06. You can browse
+Night](https://www.astro.sunysb.edu/opennight/) on 2026-10-02. You can browse
 the slides at
 
-https://farr.github.io/AstroOpenNight20260306/
+https://farr.github.io/AstroOpenNight20261002/
 
 To run locally (required for embedded YouTube playback), serve the slides over
 HTTP instead of opening `index.html` directly:
@@ -22,7 +22,7 @@ If you want local rendering with no internet connectivity, edit the
 
 ```js
 katex: {
-  version: "0.16.37"
+  version: "0.19.0"
 }
 ```
 
